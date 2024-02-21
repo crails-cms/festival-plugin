@@ -1,0 +1,22 @@
+{
+  "admin": {
+    "new-festival": "Nouveau festival",
+    "new-artist": "Nouvelle fiche d'artiste",
+    "festival": {
+      "event-subtitle": "Édition d'un événement",
+      "artist-picker": "Séléction d'artiste",
+      "artist-subtitle": "Édition de fiche d'artiste",
+      "index": "Liste des festivals",
+      "properties": {
+        "event-body": "Courte description de l'événement"
+      }
+    },
+    "menu": {
+      "festivals": "Festivals",
+      "artists": "Artistes"
+    }
+  },
+  "festival": {
+    "date-range": "Du {{from}} au {{to}}"
+  }
+}

@@ -1,0 +1,81 @@
+.festival-artist-view {
+  .thumbnail {
+    float: right;
+    margin: 1em;
+  }
+}
+
+.festival-events {
+  .thumbnail {
+    float: right;
+  }
+  .controls {
+    display: flex;
+    flex-direction: row-reverse;
+  }
+}
+
+.festival-popup {
+  position: absolute;
+  padding: 0 1em;
+  background-color: "white";
+  box-shadow: white 0 0 15px;
+  text-shadow: 1px 1px 2px black;
+  max-width: 100%;
+  width: 350px;
+  img {
+    max-width: 25%;
+    float: right;
+  }
+}
+
+#festival-artist-modal {
+  position: fixed;
+  z-index: 1000;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .overlay {
+    z-index: 1;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0.5;
+    background-color: #000;
+  }
+  .body {
+    z-index: 2;
+    padding: 1em;
+    margin: 1em;
+    background-color: white;
+    color: black;
+    padding-top: 1.75em;
+    max-width: calc(100% - 2em);
+    max-height: calc(100% - 2em);
+    overflow: scroll;
+  }
+  a.close {
+    z-index: 3;
+    display: block;
+    position: absolute;
+    top: 0;
+    width: 51px;
+    height: 51px;
+    border-radius: 50px;
+    background-color: black;
+    color: white;
+    border: 1px solid white;
+    font-size: 27px;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+  }
+}
+
+.festival-index-injection {
+  h2 { margin-bottom: 0; }
+  img { float: right; max-width: 100% }
+  .festival-date-range { font-size: 1.1em; }
+}
+

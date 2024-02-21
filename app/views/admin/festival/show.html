@@ -1,0 +1,77 @@
+#include <crails/i18n.hpp>
+#include <crails/html_form_builder.hpp>
+#include <crails/cms/routes.hpp>
+#include <crails/cms/views/style.hpp>
+#include "app/models/festival.hpp"
+#include <iostream>
+
+const Crails::Cms::Style& style = Crails::Cms::Style::singleton::require();
+const Crails::Cms::LocalRoute route = Crails::Cms::LocalRoute(vars);
+const Festival& @model;
+Crails::FormBuilder<Festival> form = Crails::FormBuilder<Festival>(this, model);
+
+using namespace Crails::Cms;
+
+// END LINKING
+
+<%= form_for(model, route(), {{"class", style.form_classes()}, {"id","main-form"}}) yields %>
+  <div class="aligned-inputs">
+    <%= style.form_group() yields %>
+      <%= form.label_for("title") %>
+      <%= form.text_field("title", &Festival::get_title, {{"maxlength",std::to_string(Crails::Cms::Editable::title_length)}}) %>
+    <% yields-end %>
+
+    <%= style.form_group() yields %>
+      <%= form.label_for("slug") %>
+      <%= form.text_field("slug", &Festival::get_slug, {{"maxlength",std::to_string(Crails::Cms::Editable::slug_length)}}) %>
+    <% yields-end %>
+  </div>
+
+  <div>
+    <%= style.form_group() yields %>
+      <%= form.label_for("start_date") %>
+      <%= form.date_field("start_date", &Festival::get_start_date) %>
+    <% yields-end %>
+
+    <%= style.form_group() yields %>
+      <%= form.label_for("end_date") %>
+      <%= form.date_field("end_date", &Festival::get_end_date) %>
+    <% yields-end %>
+  </div>
+
+  <%= style.form_group(Crails::Cms::ClassList("thumbnail-form-group")) yields %>
+    <%= form.label_for("thumbnail") %>
+    <%= form.text_field("thumbnail", &Festival::get_thumbnail_url) %>
+    <%= tag("button", {{"class", style.button_classes()}}) yields %>
+      <%= i18n::t("admin.image-library") %>
+    <% yields-end -%>
+  <% yields-end -%>
+
+  <%= style.form_group() yields %>
+    <%= form.label_for("description") %>
+    <%= form.text_area("description", model.get_description()) %>
+  <% yields-end %>
+
+  <%= form.text_area("body", model.get_body()) %>
+<% yields-end %>
+
+<div class="<%= style.button_group_classes() %>">
+  <%= style.admin_submit_button("main-form") %>
+  <%= style.admin_preview_button(route.make("preview")) %>
+  <% if (model.is_persistent()) do %>
+    <%= style.admin_remove_button(*this, route.make(model.get_id())) %>
+  <% end %>
+</div>
+
+<% if (model.is_persistent()) do -%>
+  <h2><%= i18n::t("admin.festival-events") %></h2>
+
+  <div class="festival-events-index content">
+    <%= partial("admin/festival-event/index", {
+      {"local_route", route.make(model.get_id(), "events")},
+      {"models", &model.get_events()}
+    }) %>
+  </div>
+<% end -%>
+
+<script>proudcmsAdminCKEditor("<%= form.scoped_name("body") %>");</script>

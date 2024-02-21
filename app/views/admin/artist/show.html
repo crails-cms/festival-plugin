@@ -1,0 +1,49 @@
+#include <crails/html_form_builder.hpp>
+#include <crails/i18n.hpp>
+#include <crails/cms/routes.hpp>
+#include <crails/cms/time.hpp>
+#include <crails/cms/views/style.hpp>
+#include "app/models/artist.hpp"
+
+const Crails::Cms::Style& style = Crails::Cms::Style::singleton::require();
+const Crails::Cms::LocalRoute route = Crails::Cms::LocalRoute(vars);
+const Artist& @model;
+Crails::FormBuilder<Artist> form = Crails::FormBuilder<Artist>(this, model);
+const std::string url = route.make(model.get_id());
+
+using namespace Crails::Cms;
+// END LINKING
+<%= form_for(model, route(), {{"class", style.form_classes()},{"id","main-form"}}) yields %>
+  <div class="aligned-inputs">
+    <div class="<%= style.form_group_classes() %>">
+      <%= form.label_for("title") %>
+      <%= form.text_field("title", &Artist::get_title, {{"maxlength",std::to_string(Crails::Cms::Editable::title_length)}}) %>
+    </div>
+
+    <%= style.form_group() yields %>
+      <%= form.label_for("slug") %>
+      <%= form.text_field("slug", &Artist::get_slug, {{"maxlength",std::to_string(Crails::Cms::Editable::slug_length)}}) %>
+    <% yields-end -%>
+  </div>
+
+  <%= style.form_group(Crails::Cms::ClassList("thumbnail-form-group")) yields %>
+    <%= form.label_for("thumbnail") %>
+    <%= form.text_field("thumbnail", &Artist::get_thumbnail_url) %>
+    <%= tag("button", {{"class", style.button_classes()}}) yields %>
+      <%= i18n::t("admin.image-library") %>
+    <% yields-end -%>
+    <img />
+  <% yields-end -%>
+
+  <%= form.text_area("body", model.get_body()) %>
+<% yields-end %>
+
+<div class="<%= style.button_group_classes() %>">
+  <%= style.admin_submit_button("main-form") %>
+  <%= style.admin_preview_button(route.make("preview")) %>
+  <% if (model.is_persistent()) do %>
+    <%= style.admin_remove_button(*this, route.make(model.get_id())) %>
+  <% end %>
+</div>
+
+<script>proudcmsAdminCKEditor("<%= form.scoped_name("body") %>");</script>

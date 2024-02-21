@@ -1,0 +1,50 @@
+#include <crails/cms/models/settings.hpp>
+#include <crails/cms/views/style.hpp>
+#include <crails/cms/time.hpp>
+#include <crails/i18n.hpp>
+#include "app/models/festival.hpp"
+#include "app/models/event.hpp"
+
+const Crails::Cms::Settings& @settings;
+const Crails::Cms::Style& style = settings.get_style();
+const Event& @model;
+const Festival& @festival;
+bool @preview = false;
+std::string date_format = "%d-%m-%y";
+
+// END LINKING
+
+<%= style.section(0, {{"class", "festival-event-head"}}) yields %>
+  <h4>
+    <a href="/festival/<%= festival.get_slug() %>">
+      <%= festival.get_title() %>
+    </a>
+  </h4>
+  <h2><%= model.get_title() %></h2>
+
+  <ul>
+    <% for (std::time_t date : model.get_dates()) do -%>
+      <li>
+        <%= time_to_string(date, date_format) %>
+      </li>
+    <% end -%>
+  </ul>
+
+  <div class="event-body">
+    <%= model.get_body() %>
+  </div>
+<% yields-end %>
+
+<%= style.section(1, {{"class", "festival-event-programme"}}) yields %>
+  <h3>
+    <%= i18n::t("festival.programme") %>
+  </h3>
+
+  <div class="programme-body">
+    <%= model.get_programme() %>
+  </div>
+<% yields-end %>
+
+<% if (preview) do %>
+  <%= partial("preview_script") %>
+<% end %>

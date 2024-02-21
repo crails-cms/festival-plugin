@@ -1,0 +1,9 @@
+#include "app/models/artist.hpp"
+
+const Artist& @model;
+
+// END LINKING
+
+partial("editable", {
+  {"model", reinterpret_cast<const Crails::Cms::Editable*>(&model)}
+});

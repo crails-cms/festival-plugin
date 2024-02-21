@@ -1,0 +1,20 @@
+#include <crails/cms/models/settings.hpp>
+#include <crails/cms/views/style.hpp>
+#include "app/models/artist.hpp"
+
+const Crails::Cms::Settings& @settings;
+const Crails::Cms::Style& style = settings.get_style();
+const Artist& @model;
+bool @preview = false;
+
+// END LINKING
+
+<%= style.section({{"class","festival-artist-view"}}) yields %>
+  <%= style.thumbnail(model.get_thumbnail_url()) %>
+  <h2><%= model.get_title() %></h2>
+  <div><%= model.get_body() %></div>
+<% yields-end %>
+
+<% if (preview) do %>
+  <%= partial("preview_script") %>
+<% end %>

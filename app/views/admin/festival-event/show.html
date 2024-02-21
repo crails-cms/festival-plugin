@@ -1,0 +1,71 @@
+#include <crails/i18n.hpp>
+#include <crails/html_form_builder.hpp>
+#include <crails/cms/routes.hpp>
+#include <crails/cms/views/style.hpp>
+#include "app/models/event.hpp"
+#include <iostream>
+
+const Crails::Cms::Style& style = Crails::Cms::Style::singleton::require();
+const Crails::Cms::LocalRoute route = Crails::Cms::LocalRoute(vars);
+const Event& @model;
+Crails::FormBuilder<Event> form = Crails::FormBuilder<Event>(this, model);
+
+using namespace Crails::Cms;
+
+// END LINKING
+
+<%= form_for(model, route(), {{"class", style.form_classes()}, {"id","main-form"}}) yields %>
+  <div class="aligned-inputs">
+    <%= style.form_group() yields %>
+      <%= form.label_for("title") %>
+      <%= form.text_field("title", &Event::get_title, {{"maxlength",std::to_string(Crails::Cms::Editable::title_length)}}) %>
+    <% yields-end %>
+
+    <%= style.form_group() yields %>
+      <%= form.label_for("order") %>
+      <%= form.number_field("order", &Event::get_order) %>
+    <% yields-end %>
+
+    <%= style.form_group() yields %>
+      <%= form.label_for("slug") %>
+      <%= form.text_field("slug", &Event::get_slug, {{"maxlength",std::to_string(Crails::Cms::Editable::slug_length)}}) %>
+    <% yields-end %>
+  </div>
+
+  <%= style.form_group({"customized-form-group"}) yields %>
+    <%= form.label_for("dates") %>
+    <%= form.hidden_field("dates", &Event::get_date_json) %>
+  <% yields-end %>
+
+  <%= style.form_group(Crails::Cms::ClassList("thumbnail-form-group")) yields %>
+    <%= form.label_for("thumbnail") %>
+    <%= form.text_field("thumbnail", &Event::get_thumbnail_url) %>
+    <%= tag("button", {{"class", style.button_classes()}}) yields %>
+      <%= i18n::t("admin.image-library") %>
+    <% yields-end -%>
+  <% yields-end -%>
+
+  <%= style.form_group() yields %>
+    <%= form.label_for("body", i18n::t("admin.festival.properties.event-body")) %>
+    <%= form.text_area("body", model.get_body()) %>
+  <% yields-end -%>
+
+  <%= style.form_group() yields %>
+    <%= form.label_for("programme") %>
+    <%= form.text_area("programme", model.get_programme()) %>
+  <% yields-end -%>
+<% yields-end %>
+
+<div class="<%= style.button_group_classes() %>">
+  <%= style.admin_submit_button("main-form") %>
+  <%= style.admin_preview_button(route.make("preview")) %>
+  <% if (model.is_persistent()) do %>
+    <%= style.admin_remove_button(*this, route.make(model.get_id())) %>
+  <% end %>
+</div>
+
+<script>
+  proudcmsAdminCKEditor("<%= form.scoped_name("body") %>");
+  proudcmsAdminCKEditor("<%= form.scoped_name("programme") %>");
+  createSelectField("#programme-picker");
+</script>

@@ -1,0 +1,20 @@
+#include "app/models/artist.hpp"
+#include <vector>
+
+std::vector<std::shared_ptr<Artist>>& @models;
+
+using namespace std;
+
+// END LINKING
+
+json_array<
+  vector<shared_ptr<Artist>>::const_iterator,
+  const shared_ptr<Artist>&
+>
+(models.begin(), models.end(), [&](const shared_ptr<Artist>& model)
+{
+  json("id",            model->get_id());
+  json("name",          model->get_name());
+  json("description",   model->get_description());
+  json("thumbnail_url", model->get_thumbnail_url());
+});

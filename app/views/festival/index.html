@@ -1,0 +1,44 @@
+#include <crails/cms/models/settings.hpp>
+#include <crails/cms/views/style.hpp>
+#include <crails/cms/time.hpp>
+#include <crails/i18n.hpp>
+#include "app/models/festival.hpp"
+
+const Crails::Cms::Settings& @settings;
+const Crails::Cms::Style& style = settings.get_style();
+const std::vector<Festival>& @models;
+int index = 1;
+std::string date_format = "%d-%m-%y";
+// END LINKING
+
+<% for (const Festival& model : models) do -%>
+  <%= style.section(index++, {{"class", "festival-index-item"}}) yields %>
+    <%= tag("img", {{"class","festival-thumbnail"},{"src", model.get_thumbnail_url()}}) %>
+
+    <h2><%= model.get_title() %></h2>
+    <h4>
+      <% if (model.get_start_date() != model.get_end_date()) do -%>
+        <%= i18n::t("festival.date-range", {
+            {"from", time_to_string(model.get_start_date(), date_format)},
+            {"to", time_to_string(model.get_end_date(), date_format)}
+          }) %>
+      <% end else if (model.get_start_date() > 0) do -%>
+        <%= time_to_string(model.get_start_date()) %>
+      <% end -%>
+    </h4>
+
+    <p>
+      <%= model.get_description() %>
+    </p>
+
+    <div class="controls">
+      <%= tag("a", {{"href","/festival/" + model.get_slug()},{"class",style.button_classes()}}) yields %>
+        <%= i18n::t("read-more") %>
+      <% yields-end %>
+    </div>
+  <% yields-end %>
+<% end -%>
+
+<%= partial("paginator", {
+  {"style", &style}
+}) %>
