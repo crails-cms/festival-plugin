@@ -36,19 +36,27 @@ void FestivalController::render_model(const Festival& model)
   });
 }
 
-string FestivalController::injectable_index(Crails::SharedVars vars)
+void FestivalController::InjectableIndex::run()
 {
   DataTree params;
+
   params.from_map(map<string,string>{
     {"page", "1"},
     {"count", Crails::defaults_to<string>(vars, "count", "1")}
   });
+  run(params.as_data());
+}
+
+FestivalController::InjectableIndex::InjectableIndex(const Crails::SharedVars& vars, Crails::RenderTarget& sink)
+  : Crails::Cms::Injectable(vars, sink)
+{
+}
+
+void FestivalController::InjectableIndex::run(Data params)
+{
   const auto now = chrono::system_clock::now();
-  const Crails::Renderer* renderer;
   vector<Festival> models;
-  Crails::RenderString output;
   Crails::Paginator paginator(params);
-  Crails::Odb::Connection database;
   odb::result<FestivalIndexQuery> list;
   odb::query<Festival> query =
     odb::query<Festival>::end_date >= chrono::system_clock::to_time_t(now);
@@ -62,10 +70,7 @@ string FestivalController::injectable_index(Crails::SharedVars vars)
   database.find<FestivalIndexQuery>(list, query);
   for (const auto& entry : list)
     models.push_back(entry);
-  vars.erase("layout");
-  vars["models"] = const_cast<const vector<Festival>*>(&models);
-  renderer = Crails::Renderer::pick_renderer("festival/injectable", "text/html");
-  renderer->render_template("festival/injectable", output, vars);
-  return string("<!-- Injected festivals --!>")
-    + string(output.value());
+  render("festival/injectable", {
+    {"models", const_cast<const vector<Festival>*>(&models)}
+  });
 }

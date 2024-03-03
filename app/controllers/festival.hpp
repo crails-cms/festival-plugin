@@ -1,5 +1,6 @@
 #pragma once
 #include <crails/cms/controllers/resource.hpp>
+#include <crails/cms/controllers/injectable.hpp>
 #include <crails/paginator.hpp>
 #include "app/models/festival_traits.hpp"
 #include "app/controllers/application.hpp"
@@ -12,6 +13,14 @@ class FestivalController : public Crails::Cms::ResourceController<FestivalTraits
 public:
   static constexpr const char* scope = Festival::scope;
 
+  class InjectableIndex : public Crails::Cms::Injectable
+  {
+  public:
+    InjectableIndex(const Crails::SharedVars&, Crails::RenderTarget&);
+    void run() override;
+    void run(Data params);
+  };
+
   FestivalController(Crails::Context& context) : Super(context), paginator(Super::params)
   {
   }
@@ -19,7 +28,5 @@ public:
   void homepage();
   void index();
   void render_model(const Festival& model) override;
-
-  static std::string injectable_index(Crails::SharedVars);
 };
 

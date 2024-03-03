@@ -18,13 +18,13 @@ static void initialize_renderer(const Crails::Renderers& renderers, const Crails
 void initialize_plugin_renderers()
 {
   auto& renderers = Crails::Renderers::singleton::require();
-  Crails::Cms::Injector* injector = Crails::Cms::Injector::singleton::get();
   FestivalPluginHtmlRenderer plugin_html;
   FestivalPluginJsonRenderer plugin_json;
 
   initialize_renderer(renderers, plugin_html);
   initialize_renderer(renderers, plugin_json);
-  if (injector)
-    injector->add_injectable({"festival", &FestivalController::injectable_index, {"count"}});
+  Crails::Cms::Injector::register_injectable<
+    FestivalController::InjectableIndex
+  >("festival", {"count"});
 }
 
