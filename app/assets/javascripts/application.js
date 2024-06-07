@@ -1,6 +1,10 @@
-console.log("client javascript for plugin festival loaded");
+console.log("client javascript for plugin festival RE-loaded");
 
 const modalId = "festival-artist-modal";
+
+function modalExists() {
+  return document.querySelector(`#${modalId}`) != undefined;
+}
 
 function createArtistPopup(link, artist) {
   const root = document.createElement("div");
@@ -90,7 +94,7 @@ class ArtistLink {
 
   onHoverOn(event) {
     if (event) { event.preventDefault(); }
-    if (document.querySelector(`#${modalId}`) || !this.artist.description)
+    if (modalExists() || !this.artist.description)
       return ;
     this.popup = createArtistPopup(this.root, this.artist);
     this.root.appendChild(this.popup);
@@ -102,6 +106,9 @@ class ArtistLink {
   }
 
   onActivated(event) {
+    if (modalExists())
+      return ;
+    console.log("ArtistLink activated", this.artist);
     this.onHoverOff(event);
     createArtistModal(this.artist);
   }
@@ -119,15 +126,18 @@ function createArtistLink(link, json) {
 function initializeArtistLinks() {
   window.artistLinks = [];
   document.querySelectorAll(".festival-artist-link").forEach(link => {
-    const artistId = link.dataset.id;
-    const headers = new Headers();
+    if (link.dataset.initialized != 1) {
+      const artistId = link.dataset.id;
+      const headers = new Headers();
 
-    headers.append("Accept", "application/json");
-    fetch(new Request(link.href), {
-      method: 'GET', headers: headers
-    }).then(response => {
-      return response.json();
-    }).then(createArtistLink.bind(this, link));
+      link.dataset.initialized = 1;
+      headers.append("Accept", "application/json");
+      fetch(new Request(link.href), {
+        method: 'GET', headers: headers
+      }).then(response => {
+        return response.json();
+      }).then(createArtistLink.bind(this, link));
+    }
   });
 }
 

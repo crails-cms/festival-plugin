@@ -20,7 +20,18 @@ public:
   template<typename QUERY>
   static QUERY default_order_by(const QUERY& query)
   {
-    return query + "ORDER BY" + QUERY::start_date;
+    return query + "ORDER BY" + QUERY::start_date + "DESC";
+  }
+
+  template<typename QUERY>
+  static QUERY make_index_query(Data params)
+  {
+    using namespace std;
+    auto search = params["search"].template defaults_to<string>("");
+
+    if (search.length())
+      return QUERY::title.like('%' + search + '%');
+    return QUERY(true);
   }
 
   void edit(Data) override;
@@ -34,6 +45,8 @@ public:
 
   void add_event(std::shared_ptr<Event>);
   void remove_event(const Event&);
+  void sort_events(std::vector<std::shared_ptr<Event>>&) const;
+  std::vector<std::shared_ptr<Event>> sorted_events() const;
 
 private:
   std::time_t start_date, end_date;

@@ -8,6 +8,7 @@
 const Crails::Cms::Style& style = Crails::Cms::Style::singleton::require();
 const Crails::Cms::LocalRoute route = Crails::Cms::LocalRoute(vars);
 const Festival& @model;
+const std::vector<std::shared_ptr<Event>> events = model.sorted_events();
 Crails::FormBuilder<Festival> form = Crails::FormBuilder<Festival>(this, model);
 
 using namespace Crails::Cms;
@@ -17,30 +18,30 @@ using namespace Crails::Cms;
 <%= form_for(model, route(), {{"class", style.form_classes()}, {"id","main-form"}}) yields %>
   <div class="aligned-inputs">
     <%= style.form_group() yields %>
-      <%= form.label_for("title") %>
+      <%= form.label_for("title", i18n::t("form.label.title")) %>
       <%= form.text_field("title", &Festival::get_title, {{"maxlength",std::to_string(Crails::Cms::Editable::title_length)}}) %>
     <% yields-end %>
 
     <%= style.form_group() yields %>
-      <%= form.label_for("slug") %>
+      <%= form.label_for("slug", i18n::t("form.label.slug")) %>
       <%= form.text_field("slug", &Festival::get_slug, {{"maxlength",std::to_string(Crails::Cms::Editable::slug_length)}}) %>
     <% yields-end %>
   </div>
 
   <div>
     <%= style.form_group() yields %>
-      <%= form.label_for("start_date") %>
+      <%= form.label_for("start_date", i18n::t("form.label.start_date")) %>
       <%= form.date_field("start_date", &Festival::get_start_date) %>
     <% yields-end %>
 
     <%= style.form_group() yields %>
-      <%= form.label_for("end_date") %>
+      <%= form.label_for("end_date", i18n::t("form.label.end_date")) %>
       <%= form.date_field("end_date", &Festival::get_end_date) %>
     <% yields-end %>
   </div>
 
   <%= style.form_group(Crails::Cms::ClassList("thumbnail-form-group")) yields %>
-    <%= form.label_for("thumbnail") %>
+    <%= form.label_for("thumbnail", i18n::t("form.label.thumbnail")) %>
     <%= form.text_field("thumbnail", &Festival::get_thumbnail_url) %>
     <%= tag("button", {{"class", style.button_classes()}}) yields %>
       <%= i18n::t("admin.image-library") %>
@@ -48,7 +49,7 @@ using namespace Crails::Cms;
   <% yields-end -%>
 
   <%= style.form_group() yields %>
-    <%= form.label_for("description") %>
+    <%= form.label_for("description", i18n::t("form.label.description")) %>
     <%= form.text_area("description", model.get_description()) %>
   <% yields-end %>
 
@@ -69,7 +70,7 @@ using namespace Crails::Cms;
   <div class="festival-events-index content">
     <%= partial("admin/festival-event/index", {
       {"local_route", route.make(model.get_id(), "events")},
-      {"models", &model.get_events()}
+      {"models", &events}
     }) %>
   </div>
 <% end -%>

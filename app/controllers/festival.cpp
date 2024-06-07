@@ -1,10 +1,19 @@
 #include "festival.hpp"
 #include "lib/plugin-odb.hxx"
 #include "../models/festival_traits.hpp"
+#include <crails/cms/routes.hpp>
 #include <crails/any_cast.hpp>
 #include <crails/renderer.hpp>
+#include <crails/logger.hpp>
 
 using namespace std;
+  
+FestivalController::FestivalController(Crails::Context& context) : Super(context), paginator(Super::params)
+{
+  const auto& routes = Crails::Cms::Routes::singleton::require();
+
+  vars["local_route"] = routes.get_path_for<FestivalController>();
+}
 
 void FestivalController::homepage()
 {
@@ -12,16 +21,17 @@ void FestivalController::homepage()
 
 void FestivalController::index()
 {
-  odb::result<FestivalIndexQuery> list;
-  odb::query<Festival> query(true);
   vector<Festival> models;
+  Crails::Paginator paginator(params);
+  odb::result<FestivalIndexQuery> list;
+  odb::query<Festival> query = odb::query<Festival>(true);
 
-  paginator.decorate_view(vars, [this]()
+  paginator.decorate_view(vars, [this, query]()
   {
-    return database.count<Festival>();
+    return database.count<Festival>(query);
   });
   paginator.decorate_query(query);
-  database.find<FestivalIndexQuery>(list);
+  database.find<FestivalIndexQuery>(list, query);
   for (const auto& entry : list)
     models.push_back(entry);
   render("festival/index", {
@@ -58,9 +68,7 @@ void FestivalController::InjectableIndex::run(Data params)
   vector<Festival> models;
   Crails::Paginator paginator(params);
   odb::result<FestivalIndexQuery> list;
-  odb::query<Festival> query =
-    odb::query<Festival>::end_date >= chrono::system_clock::to_time_t(now);
-  query = query + "ORDER BY" + odb::query<Festival>::start_date + "DESC";
+  odb::query<Festival> query(true);
 
   paginator.decorate_view(vars, [&]()
   {

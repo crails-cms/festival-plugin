@@ -1,22 +1,44 @@
 {
+  "festival-date-format": "%A %d %B",
+  "festival-time-format": "%Hh%M",
+  "festival-datetime-format": "%A %d %B à %Hh%M",
   "admin": {
     "new-festival": "Nouveau festival",
     "new-artist": "Nouvelle fiche d'artiste",
+    "new-festival-event": "Nouvel événement",
+    "event-title": "Titre",
+    "festival-title": "Titre",
+    "artist-title": "Nom",
+    "starts-at": "Commence à",
+    "ends-at": "Termine à",
+    "festival-events": "Evénements",
     "festival": {
       "event-subtitle": "Édition d'un événement",
       "artist-picker": "Séléction d'artiste",
-      "artist-subtitle": "Édition de fiche d'artiste",
+      "artists-subtitle": "Édition de fiche d'artiste",
       "index": "Liste des festivals",
       "properties": {
         "event-body": "Courte description de l'événement"
       }
     },
     "menu": {
-      "festivals": "Festivals",
+      "festivals": "Saisons",
       "artists": "Artistes"
     }
   },
+  "form": {
+    "label": {
+      "order": "Position",
+      "dates": "Dates",
+      "programme": "Programme",
+      "start_date": "Date de début",
+      "end_date": "Date de fin"
+    }
+  },
   "festival": {
+    "index": "Festival",
+    "programme": "Programme",
+    "view-programme": "Voir le programme",
     "date-range": "Du {{from}} au {{to}}"
   }
 }

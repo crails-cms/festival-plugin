@@ -17,28 +17,28 @@ using namespace Crails::Cms;
 <%= form_for(model, route(), {{"class", style.form_classes()}, {"id","main-form"}}) yields %>
   <div class="aligned-inputs">
     <%= style.form_group() yields %>
-      <%= form.label_for("title") %>
+      <%= form.label_for("title", i18n::t("form.label.title")) %>
       <%= form.text_field("title", &Event::get_title, {{"maxlength",std::to_string(Crails::Cms::Editable::title_length)}}) %>
     <% yields-end %>
 
     <%= style.form_group() yields %>
-      <%= form.label_for("order") %>
+      <%= form.label_for("order", i18n::t("form.label.order")) %>
       <%= form.number_field("order", &Event::get_order) %>
     <% yields-end %>
 
     <%= style.form_group() yields %>
-      <%= form.label_for("slug") %>
+      <%= form.label_for("slug", i18n::t("form.label.slug")) %>
       <%= form.text_field("slug", &Event::get_slug, {{"maxlength",std::to_string(Crails::Cms::Editable::slug_length)}}) %>
     <% yields-end %>
   </div>
 
   <%= style.form_group({"customized-form-group"}) yields %>
-    <%= form.label_for("dates") %>
+    <%= form.label_for("dates", i18n::t("form.label.dates")) %>
     <%= form.hidden_field("dates", &Event::get_date_json) %>
   <% yields-end %>
 
   <%= style.form_group(Crails::Cms::ClassList("thumbnail-form-group")) yields %>
-    <%= form.label_for("thumbnail") %>
+    <%= form.label_for("thumbnail", i18n::t("form.label.thumbnail")) %>
     <%= form.text_field("thumbnail", &Event::get_thumbnail_url) %>
     <%= tag("button", {{"class", style.button_classes()}}) yields %>
       <%= i18n::t("admin.image-library") %>
@@ -51,7 +51,7 @@ using namespace Crails::Cms;
   <% yields-end -%>
 
   <%= style.form_group() yields %>
-    <%= form.label_for("programme") %>
+    <%= form.label_for("programme", i18n::t("form.label.programme")) %>
     <%= form.text_area("programme", model.get_programme()) %>
   <% yields-end -%>
 <% yields-end %>
@@ -65,7 +65,7 @@ using namespace Crails::Cms;
 </div>
 
 <script>
-  proudcmsAdminCKEditor("<%= form.scoped_name("body") %>");
-  proudcmsAdminCKEditor("<%= form.scoped_name("programme") %>");
+  Cms.initializers.CKEditor("<%= form.scoped_name("body") %>");
+  Cms.initializers.CKEditor("<%= form.scoped_name("programme") %>");
   createSelectField("#programme-picker");
 </script>

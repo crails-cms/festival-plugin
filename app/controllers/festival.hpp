@@ -21,9 +21,7 @@ public:
     void run(Data params);
   };
 
-  FestivalController(Crails::Context& context) : Super(context), paginator(Super::params)
-  {
-  }
+  FestivalController(Crails::Context&);
 
   void homepage();
   void index();

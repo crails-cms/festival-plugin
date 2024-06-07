@@ -19,4 +19,9 @@ public:
   }
 
   std::string get_view_scope() const { return Artist::scope; }
+
+  odb::query<Artist> make_index_query() const override
+  {
+    return Artist::make_index_query<odb::query<Artist>>(params.as_data());
+  }
 };

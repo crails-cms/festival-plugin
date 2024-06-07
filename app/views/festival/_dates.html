@@ -1,0 +1,17 @@
+#include <map>
+#include <crails/cms/time.hpp>
+#include <crails/i18n.hpp>
+
+std::map<std::time_t, std::string> @dates;
+std::string date_format = i18n::t("festival-datetime-format");
+
+// END LINKING
+
+<ul>
+  <% for (const auto& date : dates) do -%>
+    <li><%= time_to_string(date.first, date_format) -%>
+      <% if (date.second.length()) do -%>
+        <span class="date-comment"><%= date.second %></span>
+      <% end -%></li>
+  <% end -%>
+</ul>

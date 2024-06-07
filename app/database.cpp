@@ -25,9 +25,9 @@ void install_plugin_database()
     "\"body\" TEXT NOT NULL,"
     "\"description\" TEXT NOT NULL,"
     "\"thumbnail\" TEXT NOT NULL,"
-    "\"event_start\" BIGINT NOT NULL,"
-    "\"event_end\" BIGINT NOT NULL,"
-    "\"programme\" TEXT NOT NULL);");
+    "\"programme\" TEXT NOT NULL,"
+    "\"date_json\" TEXT NOT NULL,"
+    "\"order\" INTEGER NOT NULL);");
   database.execute("CREATE TABLE \"festival_Festival\" ("
     "\"id\" BIGSERIAL NOT NULL PRIMARY KEY,"
     "\"deleted\" BOOLEAN NOT NULL DEFAULT FALSE,"

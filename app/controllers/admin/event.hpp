@@ -17,10 +17,12 @@ public:
   void index();
   void show();
   void destroy();
+  void update_order();
   std::string get_view_scope() const override { return "festival-event"; }
   bool edit_resource(Event&, Data) override;
   bool initialize_resource(Event&, Data) override;
   bool initialize_parent_resource();
+  bool must_protect_from_forgery() const override;
 
 private:
   std::shared_ptr<Festival> parent_resource;

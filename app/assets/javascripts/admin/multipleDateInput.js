@@ -49,8 +49,14 @@ function getTimestamp(element) {
   return (dateInput.valueAsNumber + timeInput.valueAsNumber) / 1000;
 }
 
+function getComment(element) {
+  const input = element.querySelector("textarea");
+  return input.value;
+}
+
 export default class MultipleDateTimeInput {
   constructor(input) {
+    window._multipleDateTimeInput = this;
     requireStyleElement();
     this.root = document.createElement("ul");
     this.root.classList.add(className);
@@ -85,10 +91,8 @@ export default class MultipleDateTimeInput {
 
     Cms.Style.apply("dangerButton", removeButton);
     Cms.Style.apply("smallButton", removeButton);
-    Cms.Style.apply("formGroup", dateGroup);
-    Cms.Style.apply("formGroup", timeGroup);
-    Cms.Style.apply("formInput", date);
-    Cms.Style.apply("formInput", time);
+    Cms.Style.apply("formGroup", dateGroup, timeGroup);
+    Cms.Style.apply("formInput", date, time);
     Cms.Style.apply("buttonGroup", controls);
     dateLabel.textContent = Cms.i18n.t("admin.date");
     timeLabel.textContent = Cms.i18n.t("admin.time");
@@ -128,17 +132,52 @@ export default class MultipleDateTimeInput {
     });
   }
 
+  valueForElement(element) {
+    if (element != this.controls) {
+      const timestamp = getTimestamp(element);
+      return !isNaN(timestamp) ? timestamp : null;
+    }
+    return null;
+  }
+
   updateValue() {
     const result = [];
 
     this.root.querySelectorAll("li").forEach(element => {
-      if (element != this.controls) {
-        const timestamp = getTimestamp(element);
+      const value = this.valueForElement(element);
 
-        if (!isNaN(timestamp))
-          result.push(getTimestamp(element));
-      }
+      if (value !== null)
+        result.push(value);
     });
     this.target.value = JSON.stringify(result);
+  }
+}
+
+export class MultipleDateAndCommentInput extends MultipleDateTimeInput {
+  makeDate() {
+    const element = super.makeDate();
+    const commentGroup = document.createElement("div");
+    const commentLabel = document.createElement("label");
+    const comment = document.createElement("textarea");
+
+    Cms.Style.apply("formGroup", commentGroup);
+    Cms.Style.apply("formInput", comment);
+    commentLabel.textContent = Cms.i18n.t("admin.comment");
+    commentGroup.appendChild(commentLabel);
+    commentGroup.appendChild(comment);
+    element.insertBefore(commentGroup, element.lastChild);
+    comment.addEventListener("change", this.updateValue.bind(this));
+    Cms.initializers.CKEditorButton(comment, { toolbar: 'compact' });
+    return element;
+  }
+
+  valueForElement(element) {
+    const timestamp = super.valueForElement(element);
+    const comment = getComment(element);
+
+    if (timestamp != null) {
+      return comment.lenth ? [timestamp, comment] : [timestamp];
+    }
+    return null;
   }
 }

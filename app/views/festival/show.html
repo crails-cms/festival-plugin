@@ -1,6 +1,7 @@
 #include <crails/cms/models/settings.hpp>
 #include <crails/cms/views/style.hpp>
 #include <crails/cms/time.hpp>
+#include <crails/cms/local_route.hpp>
 #include <crails/i18n.hpp>
 #include "app/models/festival.hpp"
 #include "app/models/artist.hpp"
@@ -8,10 +9,15 @@
 const Crails::Cms::Settings& @settings;
 const Crails::Cms::Style& style = settings.get_style();
 const Festival& @model;
+Crails::Cms::LocalRoute route = Crails::Cms::LocalRoute(vars);
 bool @preview = false;
-std::string date_format = "%d-%m-%y";
 
 // END LINKING
+
+<%= style.breadcrumbs({
+  {route(), i18n::t("festival.index")},
+  {route.make(model.get_slug()), model.get_title()}
+}) %>
 
 <%= style.section(0, {{"class", "festival-head"}}) yields %>
   <h2><%= model.get_title() %></h2>
@@ -22,8 +28,11 @@ std::string date_format = "%d-%m-%y";
 <% yields-end %>
 
 <%= style.section(1, {{"class", "festival-events"}}) yields %>
-  <% for (const auto& event : model.get_events()) do -%>
-    <%= tag("div", {{"class", style.card_classes()}}) yields %>
+  <% for (const auto& event : model.sorted_events()) do -%>
+    <%= tag("div", {
+      {"id", event->get_html_id()},
+      {"class", style.card_classes() + "festival-event"}
+    }) yields %>
       <div class="thumbnail">
         <%= tag("img", {{"src",event->get_thumbnail_url()}}) %>
       </div>
@@ -31,13 +40,9 @@ std::string date_format = "%d-%m-%y";
         <%= event->get_title() %>
       </h3>
       <div class="dates">
-        <ul>
-          <% for (time_t date : event->get_dates()) do -%>
-            <li>
-              <%= time_to_string(date, date_format) %>
-            </li>
-          <% end -%>
-        </ul>
+        <%= partial("festival/_dates", {
+          {"dates", event->get_dates_map()}
+        }) %>
       </div>
       <div class="description">
         <%= event->get_body() %>
@@ -46,7 +51,7 @@ std::string date_format = "%d-%m-%y";
         <div class="controls">
           <%= tag("a", {
                 {"class", std::string(style.button_classes() + "festival-programme-button")},
-                {"href", std::string("/festival/" + model.get_slug() + '/' + event->get_slug())}
+                {"href", route.make(model.get_slug(), event->get_slug(), "programme")} 
               }) yields %>
             <%= i18n::t("festival.view-programme") %>
           <% yields-end %>

@@ -12,33 +12,9 @@ class EventController : public Crails::Cms::ResourceController<EventTraits, Appl
 public:
   static constexpr const char* scope = "event";
 
-  EventController(Crails::Context& context) : Super(context)
-  {
-  }
+  EventController(Crails::Context& context);
 
-  odb::query<Festival> festival_query()
-  {
-    if (params["festival_id"].exists())
-      return odb::query<Festival>::id == params["festival_id"].as<Crails::Odb::id_type>();
-    return odb::query<Festival>::slug == params["festival_slug"].as<std::string>();
-  }
-
-  void initialize()
-  {
-    database.find_one(festival, festival_query());
-    if (festival)
-    {
-      vars["festival"] = const_cast<const Festival*>(festival.get());
-      Super::initialize();
-    }
-    else
-      Super::respond_with(Crails::HttpStatus::not_found);
-  }
-
-  void render_model(const Event& model) override
-  {
-    render("festival/event/show", {
-      {"model", &model}
-    });
-  }
+  odb::query<Festival> festival_query();
+  void initialize() override;
+  virtual void render_model(const Event& model) override;
 };

@@ -6,6 +6,7 @@
 
 const Crails::Cms::Style& style = Crails::Cms::Style::singleton::require();
 const Crails::Cms::LocalRoute route = Crails::Cms::LocalRoute(vars);
+const std::string order_route = route.make("update-order");
 const std::vector<std::shared_ptr<Event>>& @models;
 const char* date_format = "%H:%M:%S %d-%m-%y";
 
@@ -17,38 +18,44 @@ using namespace std;
   <%= link(route.make("new"), i18n::t("admin.new-festival-event"), {{"class",style.button_classes()}}) %>
 </div>
 
-<table class="<%= style.table_classes() %>">
-  <tr>
-    <th><%= i18n::t("admin.event-title") %></th>
-    <th><%= i18n::t("admin.starts-at") %></th>
-    <th><%= i18n::t("admin.ends-at") %></th>
-  </tr>
-  <% if (!models.size()) do -%>
+<table class="<%= style.sortable_table_classes() %>" data-action="<%= order_route %>">
+  <thead>
     <tr>
-      <td colspan="3"><%= i18n::t("admin.empty-table") %></td>
+      <th></th>
+      <th><%= i18n::t("admin.event-title") %></th>
+      <th><%= i18n::t("admin.starts-at") %></th>
+      <th><%= i18n::t("admin.ends-at") %></th>
     </tr>
-  <% end -%>
-  <% for (const auto& model : models) do %>
-    <tr>
-      <td>
-        <%= link(route.make(model->get_id())) yields %>
-          <% if (model->get_title().length() > 0) do -%>
-            <%= model->get_title() %>
-          <% end else do -%>
-            <%= i18n::t("admin.missing-title") %>
+  </thead>
+  <tbody>
+    <% if (!models.size()) do -%>
+      <tr>
+        <td colspan="4"><%= i18n::t("admin.empty-table") %></td>
+      </tr>
+    <% end -%>
+    <% for (const auto& model : models) do %>
+      <tr data-id="<%= model->get_id() %>">
+        <td><span class="drag-handle"></span></td>
+        <td>
+          <%= link(route.make(model->get_id())) yields %>
+            <% if (model->get_title().length() > 0) do -%>
+              <%= model->get_title() %>
+            <% end else do -%>
+              <%= i18n::t("admin.missing-title") %>
+            <% end -%>
+          <% yields-end %>
+        </td>
+        <td>
+          <% if (model->get_start_date()) do -%>
+            <%= time_to_string(*(model->get_start_date()), date_format) %>
           <% end -%>
-        <% yields-end %>
-      </td>
-      <td>
-        <% if (model->get_start_date()) do -%>
-          <%= time_to_string(*(model->get_start_date()), date_format) %>
-        <% end -%>
-      </td>
-      <td>
-        <% if (model->get_end_date()) do -%>
-          <%= time_to_string(*(model->get_end_date()), date_format) %>
-        <% end -%>
-      </td>
-    </tr>
-  <% end %>
+        </td>
+        <td>
+          <% if (model->get_end_date()) do -%>
+            <%= time_to_string(*(model->get_end_date()), date_format) %>
+          <% end -%>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
 </table>

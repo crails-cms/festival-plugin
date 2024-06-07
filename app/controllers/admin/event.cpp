@@ -3,6 +3,7 @@
 #include "lib/festival-odb.hxx"
 #include "lib/event-odb.hxx"
 #include <crails/i18n.hpp>
+#include <crails/cms/controllers/admin/actions/sort_relationship.hpp>
 
 using namespace std;
 
@@ -49,6 +50,14 @@ void AdminEventController::destroy()
   Super::destroy();
 }
 
+void AdminEventController::update_order()
+{
+  if (Crails::Cms::sort_model_action<Event>(params))
+    respond_with(Crails::HttpStatus::ok);
+  else
+    respond_with(Crails::HttpStatus::bad_request);
+}
+
 bool AdminEventController::edit_resource(Event& model, Data data)
 {
   if (initialize_parent_resource())
@@ -87,4 +96,9 @@ bool AdminEventController::initialize_parent_resource()
     vars["page_title"] = parent_resource->get_title();
   }
   return true;
+}
+
+bool AdminEventController::must_protect_from_forgery() const
+{
+  return get_action_name() != "update_order";
 }

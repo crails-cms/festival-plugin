@@ -22,6 +22,17 @@ public:
     return query + "ORDER BY" + QUERY::title;
   }
 
+  template<typename QUERY>
+  static QUERY make_index_query(Data params)
+  {
+    using namespace std;
+    auto search = params["search"].template defaults_to<string>("");
+
+    if (search.length())
+      return QUERY::title.like('%' + search + '%');
+    return QUERY(true);
+  }
+
   void set_name(const std::string& value) { set_title(value); }
   const std::string& get_name() const { return get_title(); }
 };

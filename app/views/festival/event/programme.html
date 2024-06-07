@@ -13,26 +13,28 @@ const Crails::Cms::LocalRoute route = Crails::Cms::Routes::get_local_route_for<F
 const Event& @model;
 const Festival& @festival;
 bool @preview = false;
+std::string date_format = i18n::t("festival-datetime-format");
 
 // END LINKING
 
 <%= style.breadcrumbs({
   {route(), i18n::t("festival.index")},
   {route.make(festival.get_slug() + '#' + model.get_html_id()), festival.get_title()},
-  {route.make(festival.get_slug(), model.get_slug()), model.get_title()}
+  {route.make(festival.get_slug(), model.get_slug()), model.get_title()},
+  {route.make(festival.get_slug(), model.get_slug(), "programme"), i18n::t("festival.programme")}
 }) %>
 
 <%= tag("div", {{"class", style.document_wrapper_classes()}}) yields %>
   <section class="festival-event-head">
     <h2><%= model.get_title() %></h2>
 
-    <%= partial("festival/_dates", {
-      {"dates", model.get_dates_map()}
-    }) %>
-
-    <div class="event-body">
-      <%= model.get_body() %>
-    </div>
+    <ul>
+      <% for (std::time_t date : model.get_dates()) do -%>
+        <li>
+          <%= time_to_string(date, date_format) %>
+        </li>
+      <% end -%>
+    </ul>
   </section>
 
   <section class="festival-event-programme">
@@ -49,3 +51,4 @@ bool @preview = false;
 <% if (preview) do %>
   <%= partial("preview_script") %>
 <% end %>
+

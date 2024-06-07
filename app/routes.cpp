@@ -4,6 +4,7 @@
 #include "controllers/artist.hpp"
 #include "controllers/festival.hpp"
 #include "controllers/event.hpp"
+#include "controllers/programme.hpp"
 #include "controllers/admin/artist.hpp"
 #include "controllers/admin/festival.hpp"
 #include "controllers/admin/event.hpp"
@@ -17,6 +18,7 @@ void initialize_plugin_routes()
 
   router.scope(FestivalController::scope, [&]()
   {
+    cms_routes.set_path_for<FestivalController>(router);
     router.scope(ArtistController::scope, [&]()
     {
       router.match_action("GET", "/by-id/:id", ArtistController, by_id);
@@ -28,6 +30,7 @@ void initialize_plugin_routes()
     router.scope("/:festival_slug", [&]()
     {
       router.match_action("GET", "/:slug", EventController, show);
+      router.match_action("GET", "/:slug/programme", ProgrammeController, show);
     });
   });
 
@@ -50,6 +53,7 @@ void initialize_plugin_routes()
       router.scope("/:festival_id/" + std::string(AdminEventController::scope), [&]()
       {
         cms_routes.set_path_for<AdminEventController>(router);
+        router.match_action("POST", "/update-order", AdminEventController, update_order);
         router.libcrails_cms_admin_preview(EventController);
         router.libcrails_cms_admin_crud("/", AdminEventController);
       });
