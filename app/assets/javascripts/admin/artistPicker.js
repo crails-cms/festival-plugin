@@ -35,9 +35,11 @@ export default class extends Cms.Dialog {
     const artistSelect = document.createElement("select");
     const acceptButton = document.createElement("button");
 
-    Style.apply("form", form);
-    Style.apply("formGroup", artistGroup);
-    Style.apply("confirmButton", acceptButton);
+    Cms.Style.ready.then(function() {
+      Cms.Style.apply("form", form);
+      Cms.Style.apply("formGroup", artistGroup);
+      Cms.Style.apply("confirmButton", acceptButton);
+    });
     title.classList.add("popup-title");
     title.textContent = i18n.t("admin.festival.artist-picker");
     label.textContent = i18n.t("admin.festival.artist");

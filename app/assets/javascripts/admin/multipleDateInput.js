@@ -71,7 +71,9 @@ export default class MultipleDateTimeInput {
     const element = document.createElement("li");
     const addButton = document.createElement("button");
 
-    Cms.Style.apply("button", addButton);
+    Cms.Style.ready.then(function() {
+      Cms.Style.apply("button", addButton);
+    });
     addButton.textContent = Cms.i18n.t("admin.page-editor.action.add");
     addButton.addEventListener("click", this.newDate.bind(this));
     element.appendChild(addButton);
@@ -89,11 +91,13 @@ export default class MultipleDateTimeInput {
     const controls = document.createElement("div");
     const removeButton = document.createElement("button");
 
-    Cms.Style.apply("dangerButton", removeButton);
-    Cms.Style.apply("smallButton", removeButton);
-    Cms.Style.apply("formGroup", dateGroup, timeGroup);
-    Cms.Style.apply("formInput", date, time);
-    Cms.Style.apply("buttonGroup", controls);
+    Cms.Style.ready.then(function() {
+      Cms.Style.apply("dangerButton", removeButton);
+      Cms.Style.apply("smallButton", removeButton);
+      Cms.Style.apply("formGroup", dateGroup, timeGroup);
+      Cms.Style.apply("formInput", date, time);
+      Cms.Style.apply("buttonGroup", controls);
+    });
     dateLabel.textContent = Cms.i18n.t("admin.date");
     timeLabel.textContent = Cms.i18n.t("admin.time");
     date.type = "date";
@@ -144,10 +148,12 @@ export default class MultipleDateTimeInput {
     const result = [];
 
     this.root.querySelectorAll("li").forEach(element => {
-      const value = this.valueForElement(element);
+      if (element != this.controls) {
+        const value = this.valueForElement(element);
 
-      if (value !== null)
-        result.push(value);
+        if (value !== null)
+          result.push(value);
+      }
     });
     this.target.value = JSON.stringify(result);
   }

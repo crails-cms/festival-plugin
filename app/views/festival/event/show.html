@@ -35,15 +35,17 @@ bool @preview = false;
     </div>
   </section>
 
-  <section class="festival-event-programme">
-    <h3>
-      <%= i18n::t("festival.programme") %>
-    </h3>
+  <% if (model.get_programme().length()) do -%>
+    <section class="festival-event-programme">
+      <h3>
+        <%= i18n::t("festival.programme") %>
+      </h3>
 
-    <div class="programme-body">
-      <%= model.get_programme() %>
-    </div>
-  </section>
+      <div class="programme-body">
+        <%= model.get_programme() %>
+      </div>
+    </section>
+  <% end -%>
 <% yields-end %>
 
 <% if (preview) do %>
