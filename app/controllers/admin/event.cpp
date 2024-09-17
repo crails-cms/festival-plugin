@@ -28,7 +28,7 @@ void AdminEventController::index()
   if (festival)
     list = festival->get_events();
   render("admin/" + get_view_scope() + "/index", {
-    {"models", &list}
+    {"models", const_cast<const std::vector<std::shared_ptr<Event>>*>(&list)}
   });
 }
 
