@@ -1,6 +1,9 @@
 console.log("client javascript for plugin festival RE-loaded");
 
 const modalId = "festival-artist-modal";
+const hashPrefix = "#/artist/";
+//const artistLinks = {};
+window.artistLinks = {};
 
 function modalExists() {
   return document.querySelector(`#${modalId}`) != undefined;
@@ -17,7 +20,7 @@ function createArtistPopup(link, artist) {
   root.style.top = link.offsetHeight;
   root.style.left = link.offsetWidth / 2;
   title.textContent = artist.title;
-  description.textContent = artist.description;
+  description.innerHTML = artist.description;
   picture.src = artist.thumbnail_url;
   root.appendChild(picture);
   root.appendChild(title);
@@ -56,7 +59,7 @@ function createArtistModal(artist) {
   const exitButton = createExitButton();
   const onDestroyEvent = function(event) {
     event.preventDefault();
-    document.body.removeChild(root);
+    window.location.hash = '';
   };
 
   exitButton.addEventListener("click", onDestroyEvent);
@@ -82,7 +85,7 @@ class ArtistLink {
     this.artist = artist;
     this.root.addEventListener("mouseenter", this.onHoverOn.bind(this));
     this.root.addEventListener("mouseleave", this.onHoverOff.bind(this));
-    this.root.addEventListener("click", this.onActivated.bind(this));
+    this.root.addEventListener("click", this.onClicked.bind(this));
   }
 
   destroyPopup() {
@@ -112,6 +115,20 @@ class ArtistLink {
     this.onHoverOff(event);
     createArtistModal(this.artist);
   }
+
+  onClicked(event) {
+    if (event) { event.preventDefault(); }
+    window.location.hash = `${hashPrefix}${this.root.dataset.id}`;
+  }
+}
+
+function updateArtistModalFromHash() {
+  if (location.hash.startsWith(hashPrefix)) {
+    const artistId = location.hash.slice(hashPrefix.length);
+    artistLinks[artistId].onActivated();
+  } else if (modalExists()) {
+    document.getElementById(modalId).remove();
+  }
 }
 
 function createArtistLink(link, json) {
@@ -119,12 +136,11 @@ function createArtistLink(link, json) {
     const linkController = new ArtistLink(link, json);
 
     link.$controller = linkController;
-    window.artistLinks.push(new ArtistLink(link, json));
+    artistLinks[link.dataset.id] = linkController;
   }
 }
 
 function initializeArtistLinks() {
-  window.artistLinks = [];
   document.querySelectorAll(".festival-artist-link").forEach(link => {
     if (link.dataset.initialized != 1) {
       const artistId = link.dataset.id;
@@ -139,7 +155,9 @@ function initializeArtistLinks() {
       }).then(createArtistLink.bind(this, link));
     }
   });
+  updateArtistModalFromHash();
 }
 
 document.addEventListener("DOMContentLoaded", initializeArtistLinks);
+window.addEventListener("hashchange", updateArtistModalFromHash);
 initializeArtistLinks();

@@ -32,9 +32,9 @@
 .festival-popup {
   position: absolute;
   padding: 0 1em;
-  background-color: "white";
-  box-shadow: white 0 0 15px;
-  text-shadow: 1px 1px 2px black;
+  background-color: white;
+  text: black;
+  box-shadow: var(--primary-background) 0 0 15px;
   max-width: 100%;
   width: 350px;
   img {
