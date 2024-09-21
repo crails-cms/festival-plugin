@@ -1,4 +1,5 @@
 #include <crails/i18n_settings.hpp>
+#include "sitemap.hpp"
 #include <string>
 #include <iostream>
 
@@ -35,6 +36,11 @@ extern "C"
   void uninstall()
   {
     uninstall_plugin_database();
+  }
+
+  std::unique_ptr<Crails::Cms::SiteMap::Index> plugin_sitemap_index()
+  {
+    return std::make_unique<FestivalSiteMap>();
   }
 
   std::string_view plugin_stylesheet()

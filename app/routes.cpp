@@ -21,6 +21,7 @@ void initialize_plugin_routes()
     cms_routes.set_path_for<FestivalController>(router);
     router.scope(ArtistController::scope, [&]()
     {
+      cms_routes.set_path_for<ArtistController>(router);
       router.match_action("GET", "/by-id/:id", ArtistController, by_id);
       router.match_action("GET", "/:slug", ArtistController, show);
     });
